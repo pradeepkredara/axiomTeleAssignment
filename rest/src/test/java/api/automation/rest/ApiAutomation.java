@@ -34,6 +34,8 @@ public class ApiAutomation {
 			       when().
 			       get("/api/v1/employees").
 			       then().assertThat().statusCode(200).and().log().all().extract().response();
+		System.out.println("response:"+res);	
+		
 		String key="data";
 		List<Object> list=res.jsonPath().getList(key);
 	
@@ -61,4 +63,22 @@ public class ApiAutomation {
 		
 	}
 
+@Test
+public void Scenario_3() throws IOException
+{
+	FileInputStream fis = new FileInputStream("resources\\Resource\\file.properties");
+	prop.load(fis);
+	
+	ArrayList mapData=ExcelDrivenAPI.excelData("API", "Employee","Record");
+	
+	RestAssured.baseURI = prop.getProperty("BASE");
+	Response res2=given().pathParam("ID",mapData.get(1)).
+		       when().
+		       get("/api/v1/employee/{ID}").
+		       then().assertThat().statusCode(200).and().assertThat().contentType(ContentType.JSON).and().assertThat().
+		       body("message",equalTo("Successfully! Record has been fetched.")).and().log().all().extract().response();
+	
 }
+
+}
+
